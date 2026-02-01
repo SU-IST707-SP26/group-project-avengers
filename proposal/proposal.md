@@ -1,10 +1,10 @@
 # Predicting Taxi Trip Duration and Congestion Pricing Exposure in New York City
 
 ## Team
-- **Abhishek Mohan Hundalekar**
-- **Moses Kamya** 
-- **Tarun Singh** 
-- **Morgan Cook** 
+- **Abhishek Mohan Hundalekar** (GitHub: hundalekar) - **Point of Contact (POC)**
+- **Moses Kamya** (Github: mkamya20)
+- **Tarun Singh** (GitHub: tsingh15syr)
+- **Morgan Cook** (GitHub: mcook12e)
 
 
 
