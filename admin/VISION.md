@@ -22,7 +22,7 @@ We will build machine learning models that predict taxi trip duration and identi
 **Data Source:**
 NYC Yellow Taxi Trip Records for January 2025, published by the New York City Taxi and Limousine Commission, containing millions of trip records with temporal features (pickup/dropoff times), spatial features (location IDs), trip characteristics (distance, passenger count), fare components, and the newly introduced CBD congestion fee.
 
-Key Outcomes:
+**Key Outcomes:**
 - Regression model predicting trip duration (evaluated using RMSE and MAE)
 - Classification model predicting congestion pricing exposure (evaluated using precision, recall, and ROC-AUC)
 - Feature importance analysis identifying key drivers of trip duration and congestion pricing
