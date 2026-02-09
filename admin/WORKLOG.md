@@ -4,7 +4,7 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 ---
 
-## 2025-02-08 - Notebook Structure Organization (Abhishek)
+## 2026-02-08 - Notebook Structure Organization (Abhishek)
 
 **Context**: Need to organize exploratory data analysis work and set up pipeline for future modeling phases.
 
@@ -22,7 +22,7 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 ---
 
-## 2025-02-08 - Source Code and Results Directories (Abhishek)
+## 2026-02-08 - Source Code and Results Directories (Abhishek)
 
 **Context**: Need to organize Python modules and model outputs separately from notebooks for better code reusability.
 
@@ -41,7 +41,7 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 ---
 
-## 2025-02-08 - Project Management Documentation (Moses, Abhishek)
+## 2026-02-08 - Project Management Documentation (Moses, Abhishek)
 
 **Context**: Course requires VISION.md and WORKPLAN.md in admin folder for project tracking.
 
@@ -54,7 +54,7 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 ---
 
-## 2025-02-08 - Data Infrastructure Setup (Abhishek, Moses)
+## 2026-02-08 - Data Infrastructure Setup (Abhishek, Moses)
 
 **Context**: Project requires organized data storage with separation between raw and processed data.
 
@@ -70,7 +70,7 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 ---
 
-## 2025-01-31 - Project Proposal Development (Moses)
+## 2026-01-31 - Project Proposal Development (Moses)
 
 **Context**: Course checkpoint requires comprehensive project proposal including problem statement, literature review, methodology, stakeholders, and timeline.
 
