@@ -4,6 +4,40 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 ---
 
+## 2026-02-16 - Individual Exploratory Data Analysis
+
+**Context:** Each team member independently explored the NYC Yellow Taxi dataset (January 2025, 3.47M trips, 20 columns) to understand data structure, quality issues, and key patterns before cleaning and modeling.
+
+**Common Findings Across All Members:**
+- Dataset: 3,475,226 trips with 20 features (~490-616 MB in memory)
+- 5 columns with ~15.54% missing values (540,149 rows each): passenger_count, RatecodeID, store_and_fwd_flag, congestion_surcharge, Airport_fee
+- Single-passenger trips dominate (~2.3M trips), confirmed via passenger count visualizations
+
+**Individual Contributions:**
+1. Abhishek: 2026-02-10
+- Data quality issues identified: 144,118 negative fares, 24,656 zero-passenger trips, 162 trips over 100 miles, 55 trips over $500
+- Max trip distance of 276423.57 miles — extreme outlier indicating data errors
+- Max passenger count of 9 flagged as suspicious (taxis typically hold 4-6)
+- Trip distance heavily right-skewed with mean of 5.86 miles
+
+2. Morgan: 2026-02-15
+- Identified 540,149 missing values in 5 columns: passenger_count, RatecodeID, store_and_fwd_flag, congestion_surcharge, Airport_fee
+- Created side-by-side boxplots for trip_distance, fare_amount, and total_amount — all three show extreme outliers reaching into the hundreds of thousands, confirming need for outlier removal during cleaning
+- Passenger count bar chart confirming single-rider dominance (~2.3M trips)
+
+3. Tarun: 2026-02-15
+- Engineered new features: trip_duration (minutes), pickup_hour, pickup_day, pickup_month
+- Built correlation heatmap across all numeric features (including engineered ones)
+- Scatter plots: Distance vs Fare, Fare vs Tip, Duration vs Total Amount (with 99th percentile capping for clarity)
+- Location analysis: Top 20 pickup zones bar chart and Pickup→Dropoff heatmap (Top 15 zones) revealing trip flow patterns
+- Categorical feature distributions for VendorID, payment_type, RatecodeID, store_and_fwd_flag
+
+**Impact:** Team has a shared understanding of data quality issues (missing values, negative fares, outliers), key distributions, and feature relationships. Findings will guide the data cleaning pipeline and feature engineering strategy in the next phase.
+
+---
+
+---
+
 ## 2026-02-08 - Notebook Structure Organization (Abhishek)
 
 **Context**: Need to organize exploratory data analysis work and set up pipeline for future modeling phases.
