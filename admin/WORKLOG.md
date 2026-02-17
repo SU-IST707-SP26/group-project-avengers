@@ -32,6 +32,12 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 - Location analysis: Top 20 pickup zones bar chart and Pickup→Dropoff heatmap (Top 15 zones) revealing trip flow patterns
 - Categorical feature distributions for VendorID, payment_type, RatecodeID, store_and_fwd_flag
 
+4. Moses: 2026-02-16
+- Time pattern analysis: Identified peak hours at 18:00 (267,951 trips), 17:00 (253,518 trips), and 19:00 (221,055 trips) — evening rush hour dominance
+- Trip duration analysis: Mean duration of 14.75 minutes, median 11.82 minutes, with most common duration of 9 minutes (filtered to 1-180 minute range)
+- Payment and tipping behavior: 70.34% credit card payments, 67.83% of trips include tips with average tip of $4.36 when given
+- Variable relationships: Strong correlation of 0.941 between trip distance and fare amount, and 0.803 correlation between trip distance and duration
+
 **Impact:** Team has a shared understanding of data quality issues (missing values, negative fares, outliers), key distributions, and feature relationships. Findings will guide the data cleaning pipeline and feature engineering strategy in the next phase.
 
 ---
