@@ -1,7 +1,21 @@
 # Work Log
 
 This log documents significant work completed on the NYC Taxi Trip Duration and Congestion Pricing Prediction project.
+---
 
+## 2026-02-25 - Data Cleaning and Individual Feature Engineering
+
+**Context:** Each team member independently did feature enginnering on the cleaned data set. Temporal/time, location/spatial, trip characteristics/dervied metrics, and encoding with interaction features were created.
+
+**Individual Contributions**
+
+1. Abishek: 
+
+2. Morgan: 2026-02-25
+
+3. Tarun: 
+
+4. Moses: 
 ---
 
 ## 2026-02-16 - Individual Exploratory Data Analysis
