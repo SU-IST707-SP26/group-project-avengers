@@ -12,6 +12,11 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 1. Abishek: 
 
 2. Morgan: 2026-02-25
+  - Encoding and Interaction Features
+    - **store_and_fwd_encoded**
+    - **payment_name** and **ratecode_name** (labels for credit/cash, standard/JFK/etc.)
+    - **time_slot** and **hour_x_dayofweek** (time interactions)
+    - **cbd_fee_ratio**, **total_surcharges**, **surcharges_ratio**, **base_fare_ratio** (fare structure for drivers)
 
 3. Tarun: 
 
