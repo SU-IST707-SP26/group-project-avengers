@@ -3,6 +3,65 @@
 This log documents significant work completed on the NYC Taxi Trip Duration and Congestion Pricing Prediction project.
 ---
 
+
+## 2026-03-18 - Advanced Modeling
+**Context:** After establishing baseline regression and classification models, the team implemented advanced ensemble methods to improve predictive performance and better capture nonlinear relationships and complex feature interactions. Tree-based models, including Random Forest and XGBoost, were used to enhance model accuracy and provide deeper insight into the key drivers of congestion pricing.
+
+**Individual Contributions**
+
+1. Abishek:
+
+2. Morgan: Implemented a tree-based ensemble model to capture nonlinear relationships.
+  - Model Configuration:
+    - 100 estimators
+    - Max depth: 6
+    - Learning rate: 0.1
+  - Performance:
+    - Improved predictive performance over logistic regression (higher ROC AUC)
+    - Better handling of nonlinear feature interactions
+  - Model Insights:
+    - Extracted feature importances:
+      - Time-related features (time_slot, hour interactions)
+      - Location-based features (boroughs)
+      - Distance-related features
+    - Visualized top 10 most important features
+  - Evaluation:
+    - Generated confusion matrix and ROC curve
+    - Observed stronger class separation compared to baseline model
+
+3. Tarun:
+
+4. Moses:
+
+## 2026-03-04 - Baseline Modeling
+**Context:** **Context:** Following data cleaning and feature engineering, baseline models were developed to establish benchmarks for both regression and classification tasks. A Linear Regression model was first used to predict continuous outcomes (e.g., trip duration), followed by a Logistic Regression model to predict whether a taxi trip incurs a congestion fee. These models provide interpretable benchmarks and serve as reference points for evaluating more complex models.
+
+**Individual Contributions**
+
+1. Abishek:
+
+2. Morgan: Built a baseline classification model to predict whether a trip incurs a congestion fee
+  - Preprocessing:
+    - Sampled 100,000 rows for efficiency
+    - Removed data leakage features (post-trip financial variables)
+    - Encoded categorical variables using Label Encoding
+    - Standardized features using StandardScaler
+    - Train/test split (80/20, stratified)
+  - Model:
+    - Logistic Regression with class balancing
+  - Performance:
+    - Accuracy: 0.669
+    - ROC AUC: 0.734
+    - Observations:
+        - Strong performance in predicting congestion trips (high recall for class 1)
+        - Lower precision for non-congestion trips (class imbalance impact)
+        - Serves as a solid baseline for comparison
+
+3. Tarun:
+
+4. Moses:
+
+---
 ## 2026-02-25 - Data Cleaning and Individual Feature Engineering
 
 **Context:** Each team member independently did feature enginnering on the cleaned data set. Temporal/time, location/spatial, trip characteristics/dervied metrics, and encoding with interaction features were created.
@@ -12,11 +71,28 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 1. Abishek: 
 
 2. Morgan: 2026-02-25
-  - Encoding and Interaction Features
-    - **store_and_fwd_encoded**
-    - **payment_name** and **ratecode_name** (labels for credit/cash, standard/JFK/etc.)
-    - **time_slot** and **hour_x_dayofweek** (time interactions)
-    - **cbd_fee_ratio**, **total_surcharges**, **surcharges_ratio**, **base_fare_ratio** (fare structure for drivers)
+  - Missing Value Handling:
+    - Analyzed missing values using raw dataset (~3.47M rows).
+    - Identified ~15.5% missingness across several fields (passenger_count, RatecodeID, etc.).
+    - Created missing value indicator features (5 total), documenting data quality considerations.
+  - Categorical Encoding:
+    - One-hot encoded key categorical variables:
+    - Payment type (credit, cash, dispute, etc.)
+    - VendorID 
+    - RatecodeID (e.g., JFK, Newark, standard)
+    - Encoded store_and_fwd_flag into a binary variable
+  - Interaction Features (for non-linear relationships):
+    - Distance x passenger count
+    - Fare x payment type (credit vs cash)
+    - Hour x day of week
+    - Time slot feature (168 unique combinations)
+  - Fare-Based Features (for better representation of trip cost structure):
+    - Congestion surcharge ratio
+    - Airport fee ratio
+    - MTA tax ratio
+    - CBD congestion fee ratio
+    - Total surcharge ratio
+    - Base fare ratio
 
 3. Tarun: 
 
