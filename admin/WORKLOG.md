@@ -9,7 +9,23 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 **Individual Contributions**
 
-1. Abishek:
+1. Abishek: 2026-03-28
+Built Random Forest starter pipelines for both project tasks (regression and classification), designed for Moses to tune further.
+- Regression (Trip Duration):
+
+ - RF Regressor with light regularization (max_depth=30, min_samples_leaf=5) on 500K sampled trips
+ - RMSE = 3.99 min, MAE = 2.61 min, R² = 0.858 — a 26.8% RMSE improvement over the Linear Regression baseline
+ - Stakeholder goal (RMSE < 10 min) achieved; overfitting controlled (train-test RMSE gap = 0.89 min)
+ - Top feature: trip_distance (84% importance), followed by pickup_hour and location IDs
+
+- Classification (Congestion Fee):
+
+ - RF Classifier with class_weight='balanced' and same regularization; stratified split on target
+ - Accuracy = 95.3%, AUC = 0.979, F1 = 0.968 — substantial improvement over Logistic Regression baseline
+ - Minimal overfitting (train-test accuracy gap = 0.01)
+ - Top features: PULocationID (40%) and DOLocationID (33%), confirming congestion fee is fundamentally location-driven
+
+Data integrity: Dropped all post-trip financial features, leaky derived features (avg_speed_mph, cbd_fee_ratio, etc.), and payment_name (recorded at trip end). 21 clean features retained.
 
 2. Morgan: Implemented a tree-based ensemble model to capture nonlinear relationships.
   - Model Configuration:
@@ -38,7 +54,7 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 **Individual Contributions**
 
-1. Abishek:
+1. Abishek: 
 
 2. Morgan: Built a baseline classification model to predict whether a trip incurs a congestion fee
   - Preprocessing:
