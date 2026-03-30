@@ -27,23 +27,29 @@ Built Random Forest starter pipelines for both project tasks (regression and cla
 
 Data integrity: Dropped all post-trip financial features, leaky derived features (avg_speed_mph, cbd_fee_ratio, etc.), and payment_name (recorded at trip end). 21 clean features retained.
 
-2. Morgan: Implemented a tree-based ensemble model to capture nonlinear relationships.
-  - Model Configuration:
+2. Morgan: Implemented a tree-based ensemble model to capture nonlinear relationships for both Classification and Regression ('has_congestion_fee', 'trip_duration_min')
+  - Model Configurations:
     - 100 estimators
     - Max depth: 6
     - Learning rate: 0.1
-  - Performance:
-    - Improved predictive performance over logistic regression (higher ROC AUC)
-    - Better handling of nonlinear feature interactions
-  - Model Insights:
-    - Extracted feature importances:
-      - Time-related features (time_slot, hour interactions)
-      - Location-based features (boroughs)
-      - Distance-related features
-    - Visualized top 10 most important features
-  - Evaluation:
-    - Generated confusion matrix and ROC curve
-    - Observed stronger class separation compared to baseline model
+  - Classification:
+      * Objective: Improve classification performance on congestion fee prediction.
+      * Approach:
+        - Used XGBClassifier from XGBoost.
+        - Split data (80/20) with stratify=y_congestion_fee.
+        - Default hyperparameters: n_estimators=100, learning_rate=0.1, max_depth=5.
+      * Evaluation:
+        - Predicted congestion fee on the test set.
+        - Calculated F1-score and accuracy.
+  - Regression:
+      * Objective: Model trip_duration as a continuous variable.
+      * Approach:
+        - Switched to XGBRegressor (regression mode, not classification).
+        - Split data into training and test sets without stratification.
+        - Used default hyperparameters: n_estimators=100, learning_rate=0.1, max_depth=5.
+        - Evaluation:
+        - Predictions on test set.
+        - Evaluated using mean squared error (MSE).
 
 3. Tarun:
 
