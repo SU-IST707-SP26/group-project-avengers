@@ -53,7 +53,21 @@ Data integrity: Dropped all post-trip financial features, leaky derived features
 
 3. Tarun:
 
-4. Moses:
+4. Moses: 2026-03-18
+Tuned Random Forest hyperparameters on Abhishek’s starter (work/05_advanced_models/Moses_RF.ipynb) for trip duration (regression) and has_congestion_fee (classification).
+  - Data and splits:
+    - Load data/processed/taxi_engineered.parquet; sample 500,000 rows with random_state=42.
+    - Same leakage-safe column drops as Abhishek; label-encode categoricals.
+    - Outer split: 80% train / 20% test, random_state=42, stratified on has_congestion_fee.
+    - Tuning split: 80% / 20% inside training only (X_tr / X_val) so the test set is held out until final evaluation.
+  - Regression tuning:
+    - Candidate grid (REG_CANDIDATES): n_estimators (100–500), max_depth, min_samples_leaf, optional min_samples_split, max_features (sqrt, 0.5, or full).
+    - Pick best validation MAE on X_val; refit on full X_train; report test RMSE, MAE, R² vs. Abhishek’s reference run (RMSE ≈ 3.99 min, MAE ≈ 2.61 min).
+    - Optional: train on log1p(trip_duration_min) and map back with expm1 for metrics in minutes (skewed duration).
+  - Classification tuning:
+    - Candidate grid (CLF_CANDIDATES): same knobs plus class_weight balanced; rank by validation ROC-AUC; refit on full train; report test accuracy, ROC-AUC, F1.
+  - Outputs:
+    - Validation leaderboards, final test metrics, train vs. test gap, top 15 feature importances for the tuned regressor.
 
 ## 2026-03-04 - Baseline Modeling
 **Context:** **Context:** Following data cleaning and feature engineering, baseline models were developed to establish benchmarks for both regression and classification tasks. A Linear Regression model was first used to predict continuous outcomes (e.g., trip duration), followed by a Logistic Regression model to predict whether a taxi trip incurs a congestion fee. These models provide interpretable benchmarks and serve as reference points for evaluating more complex models.
@@ -81,7 +95,15 @@ Data integrity: Dropped all post-trip financial features, leaky derived features
 
 3. Tarun:
 
-4. Moses:
+4. Moses: 2026-03-04
+No separate Moses_Baseline.ipynb; contributed temporal features and team alignment so Abhishek’s and Morgan’s baselines use one consistent engineered table.
+  - Features used by baselines:
+    - Temporal columns from Moses_FE.ipynb merged into 03_feature_engineering.ipynb as taxi_engineered.parquet: pickup_hour, pickup_day_of_week, is_weekend, is_rush_hour and peak flags, time_of_day, hour_x_dayofweek, time_slot, cyclical sin/cos for hour and day-of-week.
+  - Protocol alignment:
+    - Coordinated target definitions (trip_duration_min, has_congestion_fee) and shared engineered Parquet for fair comparison.
+    - Maintained admin/WORKPLAN.md milestones (data prep → EDA → FE → baseline → advanced).
+  - Scope note:
+    - Regression baseline: Abhishek_Baseline.ipynb; classification baseline: Morgan_Baseline.ipynb / checkpoint. Baseline-phase work here is feature and process support; primary tree modeling artifact is Moses_RF.ipynb (see Advanced Modeling).
 
 ---
 ## 2026-02-25 - Data Cleaning and Individual Feature Engineering
@@ -118,7 +140,20 @@ Data integrity: Dropped all post-trip financial features, leaky derived features
 
 3. Tarun: 
 
-4. Moses: 
+4. Moses: 2026-02-25
+  - Data cleaning (supporting role on team pipeline):
+    - Shared notebook work/02_data_cleaning/02_data_cleaning.ipynb outputs data/processed/processed_taxi_cleaned.parquet; focused on time-aware checks for downstream temporal features.
+    - Confirmed tpep_pickup_datetime preserved and parsed so pickup_hour, DOW, and month stay valid after January 5–31, 2025 filter (post–CBD congestion pricing window).
+    - Cross-checked trip_duration_min and binary has_congestion_fee (cbd_congestion_fee > 0) against VISION.md and proposal.
+    - Reviewed invalid duration removal and distance/fare outlier rules so time-of-day and duration distributions support rush-hour and weekend flags in FE.
+  - Feature engineering (temporal features; Moses_FE.ipynb):
+    - Integrated into work/03_feature_engineering/03_feature_engineering.ipynb; output data/processed/taxi_engineered.parquet.
+    - Calendar and clock: pickup_hour, pickup_day_of_week, pickup_month, pickup_day_of_month, pickup_day_name where used before encoding.
+    - Flags from EDA: is_weekend; peak and rush definitions (evening peak 17:00–19:00, morning rush 7:00–9:00, evening rush 17:00–19:00, combined is_rush_hour).
+    - Categorical time buckets: time_of_day, hour_x_dayofweek, time_slot (hour × DOW bins).
+    - Cyclical encodings: sine/cosine of hour and day-of-week for continuity across midnight.
+    - Combined notebook applies stakeholder-focused feature trimming per 03_feature_engineering documentation; temporal set feeds baselines and tree models unless a notebook drops columns for leakage.
+
 ---
 
 ## 2026-02-16 - Individual Exploratory Data Analysis
