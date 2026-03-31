@@ -75,6 +75,15 @@ Tuned Random Forest hyperparameters on Abhishek’s starter (work/05_advanced_mo
 **Individual Contributions**
 
 1. Abishek: 
+2026-03-05 - Baseline Model: Linear Regression (Trip Duration Prediction)
+Abhishek:
+- Built baseline Linear Regression model to predict trip_duration_min using 500K sampled trips from the engineered dataset
+- Identified and dropped 23 leaky/post-trip features (avg_speed_mph, fare_amount, tip_to_total_ratio, etc.) — kept only features a driver would know before accepting a trip
+- Encoded 6 categorical features (time_of_day, pickup_borough, dropoff_borough, distance_category, payment_name, ratecode_name) and scaled with StandardScaler
+- Results: Test RMSE = 5.45 min, MAE = 3.75 min, R² = 0.7386 — stakeholder goal of RMSE < 10 min achieved
+- Model is 48.9% better than naive baseline (always predict mean = 10.66 min) with no overfitting (train-test RMSE gap = 0.09 min)
+- Generated diagnostic plots (actual vs predicted, residual distribution, residuals vs predicted) and feature importance analysis via standardized coefficients
+- Reviewed Morgan's logistic regression baseline and shared feedback on data leakage issues, missing location features, and class imbalance handling
 
 2. Morgan: Built a baseline classification model to predict whether a trip incurs a congestion fee
   - Preprocessing:
@@ -106,6 +115,19 @@ No separate Moses_Baseline.ipynb; contributed temporal features and team alignme
     - Regression baseline: Abhishek_Baseline.ipynb; classification baseline: Morgan_Baseline.ipynb / checkpoint. Baseline-phase work here is feature and process support; primary tree modeling artifact is Moses_RF.ipynb (see Advanced Modeling).
 
 ---
+	
+## 2026-03-01 - Add model-focused EDA (In-Depth EDA Re-analysis)
+Abhishek:
+- Traced missing values (15.5%) to specific vendor systems — identified Vendor 6 as primary source
+- Identified key data quality issues: negative fares, zero-distance trips, zero-passenger records, invalid RatecodeIDs, pre-congestion-pricing dates
+- Analyzed distributions for trip duration, pickup hour, day of week, passenger count, and trip distance
+- Explored relationships: duration varies ~40% by hour, Manhattan zones show 80-90% congestion fee rate vs airports at 30-44%, confirming location matters more than time for fee prediction
+- Built data cleaning plan (12 actions) and feature engineering plan (6 features) with data leakage identification
+- Documented congestion zone fee structure from MTA source ($0.75/trip, weekday 5AM-9PM, weekend 9AM-9PM, Manhattan south of 60th St)
+
+---
+
+---
 ## 2026-02-25 - Data Cleaning and Individual Feature Engineering
 
 **Context:** Each team member independently did feature enginnering on the cleaned data set. Temporal/time, location/spatial, trip characteristics/dervied metrics, and encoding with interaction features were created.
@@ -113,6 +135,15 @@ No separate Moses_Baseline.ipynb; contributed temporal features and team alignme
 **Individual Contributions**
 
 1. Abishek: 
+2026-02-20 - Feature Engineering: Trip Characteristics & Derived Metrics
+Abhishek:
+- Created avg_speed_mph (trip_distance / trip_duration_min * 60) with clipping at 60 mph and inf/NaN handling
+- Built fare efficiency features: fare_per_mile and total_per_mile with division-by-zero protection and clipping
+- Added passenger features: is_single_passenger flag and passenger_count_binned (solo/pair/group)
+- Calculated cost ratios: tip_percentage and tip_to_total_ratio, both clipped to 0-100 range
+- Created distance_category using pd.cut (short: 0-2mi, medium: 2-5mi, long: 5+ mi)
+- Added outlier flags: is_extreme_distance and is_extreme_fare based on 95th percentile thresholds
+- Total: 10 features created, 6 retained after team trimming for file size (avg_speed_mph, is_single_passenger, tip_to_total_ratio, distance_category, is_extreme_distance, is_extreme_fare)
 
 2. Morgan: 2026-02-25
   - Missing Value Handling:
