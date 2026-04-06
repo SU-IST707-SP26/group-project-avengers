@@ -51,7 +51,26 @@ Data integrity: Dropped all post-trip financial features, leaky derived features
         - Predictions on test set.
         - Evaluated using mean squared error (MSE).
 
-3. Tarun:
+3. Tarun: 2026-04-06
+Built XGBoost models for both project tasks (classification and regression) with tuned hyperparameters and early-stopping validation (Tarun_XGB.ipynb).
+  - Data and splits:
+    - Stratified sample of 150,000 rows from data/processed/taxi_engineered.parquet (random_state=42), preserving has_congestion_fee class balance (74.5% / 25.5%).
+    - Same leakage-safe column drops as team pipeline: all post-trip financial features, leaky derived features (avg_speed_mph, cbd_fee_ratio, etc.), and payment_name. 21 clean features retained.
+    - 11 categorical columns (PULocationID, DOLocationID, RatecodeID, pickup_hour, pickup_day_of_week, time_slot, time_of_day, pickup_borough, dropoff_borough, distance_category, ratecode_name) handled natively via XGBoost enable_categorical=True.
+    - Three-way split: 64% train / 16% validation / 20% test (stratified on target for classification).
+  - Classification (Congestion Fee — XGBClassifier):
+    - Hyperparameters: n_estimators=300, learning_rate=0.05, max_depth=6, min_child_weight=3, subsample=0.80, colsample_bytree=0.80, early_stopping_rounds=30.
+    - Early stopping selected iteration 191 (validation log loss = 0.1145).
+    - Test results: Accuracy = 96.3%, ROC-AUC = 0.986, F1 = 0.975, Precision = 0.984, Recall = 0.966.
+    - Top features: PULocationID (32.3%), DOLocationID (22.6%), pickup_borough (11.2%), is_airport_pickup (11.2%) — confirming congestion fee is fundamentally location-driven.
+    - Generated confusion matrix, ROC curve, and feature importance visualizations.
+  - Regression (Trip Duration — XGBRegressor):
+    - Hyperparameters: n_estimators=500, learning_rate=0.05, max_depth=6, min_child_weight=3, subsample=0.80, colsample_bytree=0.80, early_stopping_rounds=30.
+    - Early stopping selected iteration 423 (validation RMSE = 3.92 min).
+    - Test results: RMSE = 3.90 min, MAE = 2.50 min, R² = 0.866 — stakeholder goal (RMSE < 10 min) achieved; competitive with Abhishek's RF baseline (RMSE ≈ 3.99 min).
+    - Top features: is_extreme_distance (38.2%), distance_category (29.5%), trip_distance (16.5%), is_same_borough (8.0%).
+    - Generated actual-vs-predicted scatter, residual histogram, and feature importance visualizations.
+  - Outputs: All metrics saved to tarun_xgb_metrics.json for downstream comparison.
 
 4. Moses: 2026-03-18
 Tuned Random Forest hyperparameters on Abhishek's starter (work/05_advanced_models/Moses_RF.ipynb) for trip duration (regression) and has_congestion_fee (classification).
