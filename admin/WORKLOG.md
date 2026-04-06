@@ -54,7 +54,7 @@ Data integrity: Dropped all post-trip financial features, leaky derived features
 3. Tarun:
 
 4. Moses: 2026-03-18
-Tuned Random Forest hyperparameters on Abhishek’s starter (work/05_advanced_models/Moses_RF.ipynb) for trip duration (regression) and has_congestion_fee (classification).
+Tuned Random Forest hyperparameters on Abhishek's starter (work/05_advanced_models/Moses_RF.ipynb) for trip duration (regression) and has_congestion_fee (classification).
   - Data and splits:
     - Load data/processed/taxi_engineered.parquet; sample 500,000 rows with random_state=42.
     - Same leakage-safe column drops as Abhishek; label-encode categoricals.
@@ -62,7 +62,7 @@ Tuned Random Forest hyperparameters on Abhishek’s starter (work/05_advanced_mo
     - Tuning split: 80% / 20% inside training only (X_tr / X_val) so the test set is held out until final evaluation.
   - Regression tuning:
     - Candidate grid (REG_CANDIDATES): n_estimators (100–500), max_depth, min_samples_leaf, optional min_samples_split, max_features (sqrt, 0.5, or full).
-    - Pick best validation MAE on X_val; refit on full X_train; report test RMSE, MAE, R² vs. Abhishek’s reference run (RMSE ≈ 3.99 min, MAE ≈ 2.61 min).
+    - Pick best validation MAE on X_val; refit on full X_train; report test RMSE, MAE, R² vs. Abhishek's reference run (RMSE ≈ 3.99 min, MAE ≈ 2.61 min).
     - Optional: train on log1p(trip_duration_min) and map back with expm1 for metrics in minutes (skewed duration).
   - Classification tuning:
     - Candidate grid (CLF_CANDIDATES): same knobs plus class_weight balanced; rank by validation ROC-AUC; refit on full train; report test accuracy, ROC-AUC, F1.
@@ -105,7 +105,7 @@ Abhishek:
 3. Tarun:
 
 4. Moses: 2026-03-04
-No separate Moses_Baseline.ipynb; contributed temporal features and team alignment so Abhishek’s and Morgan’s baselines use one consistent engineered table.
+No separate Moses_Baseline.ipynb; contributed temporal features and team alignment so Abhishek's and Morgan's baselines use one consistent engineered table.
   - Features used by baselines:
     - Temporal columns from Moses_FE.ipynb merged into 03_feature_engineering.ipynb as taxi_engineered.parquet: pickup_hour, pickup_day_of_week, is_weekend, is_rush_hour and peak flags, time_of_day, hour_x_dayofweek, time_slot, cyclical sin/cos for hour and day-of-week.
   - Protocol alignment:
@@ -169,7 +169,26 @@ Abhishek:
     - Total surcharge ratio
     - Base fare ratio
 
-3. Tarun: 
+3. Tarun: 2026-03-01
+Feature Engineering: Geographical/Location Features (Tarun_FE.ipynb)
+  - Borough Mapping:
+    - Loaded NYC TLC Taxi Zone Lookup CSV (265 zones) and mapped each PULocationID and DOLocationID to its corresponding borough
+    - Created pickup_borough and dropoff_borough columns; handled unmapped locations (288 pickup, 8,651 dropoff) by filling with 'Unknown'
+  - Cross-Borough Trip Flags:
+    - is_same_borough: binary flag for trips staying within one borough
+    - is_cross_borough: binary flag for inter-borough trips (note: inverse of is_same_borough — one should be dropped before modeling to avoid multicollinearity)
+    - borough_route: string feature capturing trip route (e.g., "Manhattan -> Brooklyn")
+  - Airport Flags (9 features):
+    - Mapped JFK (zone 132), LaGuardia (zone 138), and EWR (zone 1) using official TLC zone IDs
+    - Created per-airport pickup/dropoff flags: is_jfk_pickup, is_jfk_dropoff, is_lga_pickup, is_lga_dropoff, is_ewr_pickup, is_ewr_dropoff
+    - Combined flags: is_airport_pickup, is_airport_dropoff, is_airport_trip
+  - Zone Popularity / Frequency Encoding:
+    - pickup_zone_freq: normalized frequency of each pickup zone across all trips
+    - dropoff_zone_freq: normalized frequency of each dropoff zone across all trips
+    - route_id: combined PU-DO location pair as a single feature
+    - route_freq: normalized frequency of each route pair
+  - Output: 18 geographical features total; saved to data/processed/processed_taxi_with_geo_features.parquet
+  - Notebook styled to match Moses's temporal FE notebook structure for team consistency
 
 4. Moses: 2026-02-25
   - Data cleaning (supporting role on team pipeline):
@@ -310,5 +329,3 @@ Abhishek:
 - Updated proposal with refinements based on team feedback
 
 **Impact**: Project scope, objectives, and approach clearly defined. Proposal approved by instructor. Clear roadmap for execution including baseline models (linear/logistic regression) and advanced models (random forests, gradient boosting).
-
-
