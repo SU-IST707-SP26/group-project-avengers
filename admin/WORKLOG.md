@@ -3,7 +3,41 @@
 This log documents significant work completed on the NYC Taxi Trip Duration and Congestion Pricing Prediction project.
 ---
 
+## 2026-04-17 - Model Evaluation
+**Context:** Use baseline and advanced models to expand evaluation to include deeper performance diagnostics and model comparison.
 
+**Individual Contributions**
+
+1. Abishek:
+
+2. Morgan: 2026-04-17
+Implemented and evaluated multiple models for has_congestion_fee (classification):
+  - Logistic Regression (baseline)
+  - Random Forest Classifier
+  - XGBoost Classifier
+Conducted model comparison using:
+  - Accuracy
+  - F1-score
+  - Confusion Matrix (TP, FP, TN, FN analysis)
+Interpreted model tradeoffs:
+  - Logistic Regression: strong baseline, interpretable but limited nonlinear performance
+  - Random Forest: improved handling of feature interactions
+  - XGBoost: strongest overall classification performance, best balance of precision/recall
+Added interpretability:
+  - Analyzed misclassification patterns (false positives vs false negatives)
+  - Linked errors to real-world implications (incorrect congestion fee prediction vs missed fee cases)
+  - Analyzed accuracy and F1 scores based on time of day (higher accuracy & F1 score) during very early/very late times
+
+3. Tarun:
+
+4. Moses:
+
+
+
+
+
+
+---
 ## 2026-03-18 - Advanced Modeling
 **Context:** After establishing baseline regression and classification models, the team implemented advanced ensemble methods to improve predictive performance and better capture nonlinear relationships and complex feature interactions. Tree-based models, including Random Forest and XGBoost, were used to enhance model accuracy and provide deeper insight into the key drivers of congestion pricing.
 
@@ -88,6 +122,8 @@ Tuned Random Forest hyperparameters on Abhishek's starter (work/05_advanced_mode
   - Outputs:
     - Validation leaderboards, final test metrics, train vs. test gap, top 15 feature importances for the tuned regressor.
 
+---
+
 ## 2026-03-04 - Baseline Modeling
 **Context:** **Context:** Following data cleaning and feature engineering, baseline models were developed to establish benchmarks for both regression and classification tasks. A Linear Regression model was first used to predict continuous outcomes (e.g., trip duration), followed by a Logistic Regression model to predict whether a taxi trip incurs a congestion fee. These models provide interpretable benchmarks and serve as reference points for evaluating more complex models.
 
@@ -121,9 +157,7 @@ Abhishek:
         - Lower precision for non-congestion trips (class imbalance impact)
         - Serves as a solid baseline for comparison
 
-3. Tarun:
-
-4. Moses: 2026-03-04
+3. Moses: 2026-03-04
 No separate Moses_Baseline.ipynb; contributed temporal features and team alignment so Abhishek's and Morgan's baselines use one consistent engineered table.
   - Features used by baselines:
     - Temporal columns from Moses_FE.ipynb merged into 03_feature_engineering.ipynb as taxi_engineered.parquet: pickup_hour, pickup_day_of_week, is_weekend, is_rush_hour and peak flags, time_of_day, hour_x_dayofweek, time_slot, cyclical sin/cos for hour and day-of-week.
