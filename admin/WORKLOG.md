@@ -28,7 +28,22 @@ Added interpretability:
   - Linked errors to real-world implications (incorrect congestion fee prediction vs missed fee cases)
   - Analyzed accuracy and F1 scores based on time of day (higher accuracy & F1 score) during very early/very late times
 
-3. Tarun:
+3. Tarun: 2026-04-17
+Expanded evaluation of the XGBoost regression model for trip duration in `Tarun_mod_eval.ipynb`, focusing on practical error analysis beyond standard metrics.
+- Residual analysis:
+  - Computed residuals as actual trip duration minus predicted trip duration
+  - Added residual plots to check whether prediction errors were randomly scattered or showed systematic bias
+  - Interpreted residual behavior in plain language to explain when the model appears well-calibrated versus when it may be biased
+- Group-based error checks:
+  - Compared model performance across simple, interpretable groups such as rush hour vs. non-rush hour and short trips vs. long trips
+  - Used these comparisons to identify situations where prediction error becomes less stable
+- Worst-case prediction review:
+  - Identified trips with the largest absolute errors
+  - Summarized the worst prediction cases in a small review table using the most relevant trip-level fields
+  - Added practical commentary on what these difficult cases appear to have in common
+- Communication / interpretation:
+  - Added concise takeaway bullets in everyday language, including “The model struggles when …” style findings
+  - Framed results so non-technical stakeholders can understand where the model is reliable and where caution is needed
 
 4. Moses:
 
