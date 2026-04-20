@@ -8,7 +8,19 @@ This log documents significant work completed on the NYC Taxi Trip Duration and 
 
 **Individual Contributions**
 
-1. Abishek:
+1. Abhishek: 2026-04-19
+Built and evaluated comprehensive model comparison notebook (Abhishek_mod_eval.ipynb) comparing baseline vs advanced models across both tasks:
+- Regression (trip duration): Linear Regression (baseline) vs Random Forest
+- Classification (congestion fee): Logistic Regression (baseline) vs Random Forest
+
+Evaluation included:
+- Side-by-side metrics tables with naive baselines (predict-mean for regression, majority-class for classification)
+- Train vs test comparison for overfitting detection (RMSE gap, accuracy gap)
+- Regression diagnostics: actual vs predicted scatter, residual distributions, residuals vs predicted plots for both models
+- Error distribution comparison: overlaid residual histograms, MAE breakdown by trip duration range
+- Classification diagnostics: confusion matrices, ROC curves, predicted probability distributions
+- Feature importance comparison (LR standardized coefficients vs RF Gini importance) for both tasks
+- Final summary with percentage improvements (RF over baseline: RMSE +25%, AUC +33.5%) and key takeaways linking feature importance to stakeholder insights (congestion fee is fundamentally spatial)
 
 2. Morgan: 2026-04-17
 Implemented and evaluated multiple models for has_congestion_fee (classification):
