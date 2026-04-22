@@ -121,10 +121,12 @@ Logistic Regression:
 - Served as a strong, interpretable baseline
 - Limited by its assumption of linear relationships
 - Unable to fully capture interactions like hour × borough
+
 Random Forest:
 - Improved performance by modeling nonlinear interactions
 - Reduced overfitting through averaging across trees
 - However, lacked the iterative refinement of boosting
+
 XGBoost:
 - Achieved the best overall results across all evaluation metrics
 - More effectively captured high-order interactions and rare patterns
