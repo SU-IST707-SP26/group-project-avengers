@@ -1,0 +1,174 @@
+# Milestone 7: Interpretation & Implications
+ 
+**Authors:** Abhishek Hundalekar, Morgan Cook, Tarun, Moses  
+**Course:** IST 707 Applied Machine Learning  
+**Date:** 22 April 2026
+ 
+---
+ 
+## Part A: Stakeholder Interpretation
+ 
+### 1. Abhishek — Linear Regression & Random Forest (Baseline vs Starter)
+ 
+#### 1a. Regression — Trip Duration Prediction
+ 
+##### What the Models Learned
+ 
+Our primary stakeholder is Maria Santos — an independent NYC yellow cab driver who needs to make split-second accept/decline decisions on ride requests. Her profitability workflow depends on estimating trip duration to calculate an hourly earnings rate: predicted fare minus the $0.75 driver congestion fee, divided by estimated trip time. Our regression models predict trip duration in minutes using only information available at pickup time (distance, pickup/dropoff zone, hour, day of week) — exactly the inputs Maria has when a request comes in.
+ 
+Both models comfortably beat the stakeholder goal of RMSE < 10 minutes, with Random Forest (RMSE = 3.99) substantially outperforming the Linear Regression baseline (RMSE = 5.32). The classification model also exceeded its target, achieving 95.3% accuracy against the >85% goal.
+ 
+##### Feature Importance — What Drives Trip Duration?
+ 
+**Trip distance is the dominant predictor in both models.** This is intuitive — longer trips take longer — but the degree of dominance differs. In Linear Regression, `trip_distance` and `distance_category` together account for the bulk of predictive power. These two features are correlated (distance_category is derived from trip_distance), which inflates the apparent importance of the pair in a linear model and can make individual coefficient estimates unstable due to multicollinearity.
+ 
+Random Forest tells a richer story. While `trip_distance` remains the top feature, temporal features (`pickup_hour`, `time_of_day`, `time_slot`) and spatial features (`DOLocationID`, `PULocationID`) contribute meaningfully. This reflects a real-world pattern: a 5-mile trip at 8 AM in Midtown takes far longer than the same distance at 2 AM in Queens. Random Forest captures these location × time interactions naturally, which is why it achieves a 25% RMSE improvement over Linear Regression.
+ 
+##### Practical Implications for Maria and Drivers Like Her
+ 
+**Direct impact on the accept/decline decision:**
+- With the Random Forest model, Maria can estimate trip duration within ~4 minutes of actual time. For a typical CBD pickup, this means her hourly rate calculation (net fare ÷ trip time) will be accurate enough to reliably distinguish profitable trips from unprofitable ones — like the difference between a $51/hour Upper East Side run (decline) and a $74/hour JFK airport run (accept).
+- The model tends to underpredict long trips (30+ minutes) based on the MAE-by-duration-range analysis. For Maria, this means airport runs and cross-borough trips may take longer than estimated — her profitability calculation should include a buffer for these high-duration trips to avoid overestimating her hourly rate.
+- Rush hour and time-of-day effects are captured, so the model already accounts for the congestion patterns Maria encounters during her Tuesday morning shifts in Midtown.
+ 
+**For fleet operators and dispatch systems:**
+- The strong predictive power of pickup/dropoff location IDs suggests that certain corridors have consistently longer trip times — fleet operators could use this to optimize driver positioning.
+- Further hyperparameter tuning (Moses's RF tuning) could reduce the remaining train-test gap and improve generalization.
+ 
+---
+ 
+#### 1b. Classification — Congestion Fee Prediction
+ 
+##### What the Models Learned
+ 
+Our classification models predict whether a trip will incur NYC's congestion pricing fee, which applies to trips entering or passing through the Manhattan Central Business District (CBD) below 60th Street. Random Forest (AUC = 0.979, F1 = 0.968) dramatically outperforms the Logistic Regression baseline (AUC = 0.734).
+ 
+##### Feature Importance — What Drives Congestion Fee Exposure?
+ 
+**Location features dominate the Random Forest classifier.** `PULocationID` and `DOLocationID` are the top two features by a wide margin, followed by `trip_distance`, `pickup_borough`, and `dropoff_borough`. This makes intuitive sense: the congestion fee is fundamentally a spatial policy — it applies to a defined geographic zone. Knowing where a trip starts and ends is nearly sufficient to predict whether it crosses the CBD.
+ 
+**Logistic Regression shows a different pattern.** `is_airport_trip`, `PULocationID`, and `distance_category` rank highest. The linear model relies on proxies (airport trips are almost always outside the CBD; longer distances are more likely to cross the zone) because it cannot model the complex, non-linear boundary between fee and no-fee zones using raw location IDs alone.
+ 
+##### Why Logistic Regression Struggles
+ 
+The Logistic Regression baseline achieves 77.5% accuracy, which sounds reasonable until you consider that a naive "predict YES for everything" baseline gets 74.4%. The classification report reveals the problem clearly: the model has 0.98 recall on the majority class (Has Fee) but only 0.18 recall on the minority class (No Fee). Without `class_weight='balanced'`, the model essentially defaults to predicting the majority class for most trips. This is a classic example of accuracy masking poor performance on the class that actually matters for decision-making.
+ 
+Random Forest, using `class_weight='balanced'`, achieves 0.93 recall on No Fee and 0.96 recall on Has Fee — strong performance on both classes.
+ 
+##### Practical Implications for Stakeholders
+ 
+**For Maria's profitability workflow (dual-model integration):**
+- This is the second half of Maria's accept/decline calculation. When she gets a ride request, the duration model tells her *how long* the trip takes, and the congestion fee model tells her *whether* the passenger will face the CBD surcharge — which affects the total fare she can estimate and, by extension, her net earnings per hour.
+- The model's 95.3% accuracy means only about 1 in 20 trips would be incorrectly classified. The predicted probability output enables confidence-based decisions — Maria could set a personal threshold (e.g., only factor in the fee when the model is >80% confident) to minimize surprises.
+- Understanding fee patterns also helps Maria navigate demand shifts: passengers may avoid CBD-bound trips due to the surcharge, changing where ride requests cluster throughout the day.
+ 
+**For city policy analysts:**
+- The dominance of location features confirms that the congestion pricing policy is geographically well-defined and its impact is predictable from origin-destination patterns.
+- The model could be used to estimate the revenue impact of congestion pricing by predicting fee applicability across historical trip data.
+- Time-of-day features contribute modestly, suggesting that while the fee applies 24/7, the types of trips affected do vary by time — something policymakers might consider if implementing time-variable pricing.
+ 
+**For passengers:**
+- A trip-planning app could integrate this model to provide upfront congestion fee estimates, improving fare transparency before booking — addressing the information gap that makes passengers hesitant about CBD trips.
+ 
+---
+ 
+### 2. Morgan — XGBoost Classifier (Classification)
+ 
+<!-- MORGAN: Please add your interpretation below. Cover:
+     - What your XGBoost classifier learned (key metrics: accuracy, F1, AUC)
+     - Feature importance findings and what they mean for Maria's workflow
+     - How XGBoost compared to Logistic Regression and Random Forest for classification
+     - Misclassification analysis: false positives vs false negatives and real-world implications
+     - Time-of-day accuracy/F1 patterns you found (higher accuracy during very early/late times)
+     - Practical implications for stakeholders
+-->
+ 
+*[To be completed by Morgan]*
+ 
+---
+ 
+### 3. Tarun — XGBoost Regressor (Regression)
+ 
+<!-- TARUN: Please add your interpretation below. Cover:
+     - What your tuned XGBoost regressor learned (key metrics: RMSE, MAE, R²)
+     - How it compared to Abhishek's RF and Linear Regression baselines
+     - Residual analysis findings: where the model is well-calibrated vs biased
+     - Group-based error checks: rush hour vs non-rush hour, short vs long trips
+     - Worst-case predictions: what do the hardest trips have in common?
+     - Practical "the model struggles when..." findings for Maria and fleet operators
+-->
+ 
+*[To be completed by Tarun]*
+ 
+---
+ 
+### 4. Moses — Tuned Random Forest
+ 
+<!-- MOSES: Please add your interpretation below. Cover:
+     - What hyperparameters you tuned and how the tuned RF compared to Abhishek's starter RF
+     - Key metrics improvement (or tradeoffs) from tuning
+     - Did tuning reduce the overfitting gap? (Abhishek's starter had a train-test RMSE gap)
+     - Feature importance: any shifts from the untuned version?
+     - Practical implications of the tuned model for stakeholders
+-->
+ 
+*[To be completed by Moses]*
+ 
+---
+ 
+### 5. Cross-Task Insights — The Dual-Model Advantage (Team)
+ 
+Both tasks reveal a consistent theme: **location is the most important structural feature in NYC taxi data.** Where a trip starts and ends determines both how long it will take (via traffic patterns and distance) and whether it incurs congestion fees (via CBD zone boundaries). Temporal features (hour, day of week, rush hour) add a meaningful second layer of signal, particularly for trip duration.
+ 
+The consistent superiority of Random Forest over linear models across both tasks demonstrates that NYC taxi behavior involves significant non-linear interactions — a trip from JFK at 5 PM behaves very differently from a trip within Manhattan at the same time, and tree-based models capture these interactions without explicit feature engineering.
+ 
+**What makes our approach novel**, as identified in our stakeholder analysis, is twofold: (1) we use post-congestion pricing data from January 2025 — all prior ML work on NYC taxi data (e.g., the 2016 Kaggle competition) predates the policy and cannot analyze fee patterns, and (2) we combine duration prediction with fee exposure prediction into a dual-model system that enables the kind of profitability calculation Maria needs, rather than treating each prediction task in isolation.
+ 
+<!-- TEAM: Once Morgan, Tarun, and Moses add their sections above, update this 
+     cross-task section to include comparisons across all models:
+     - Best regression model overall (RF vs XGBoost tuned?)
+     - Best classification model overall (RF vs XGBoost?)
+     - Consistent feature importance patterns across all models
+-->
+ 
+---
+ 
+## Part B: Ethical Considerations & Limitations
+ 
+### 1. Data Representativeness
+ 
+**Temporal scope:** Our dataset covers January 2025 only — the first month after NYC's congestion pricing took effect (January 5, 2025). This means our models capture early behavioral responses to the policy, which may not reflect long-term equilibrium patterns. Drivers like Maria, passengers, and routing algorithms may all have adapted in subsequent months. While both stakeholder success metrics were exceeded (RMSE = 3.99 vs. <10 min goal; accuracy = 95.3% vs. >85% goal), these numbers are validated only on January 2025 data. Any operational deployment should be re-validated against more recent months.
+ 
+**Seasonal bias:** January is a winter month with holidays, potential weather disruptions, and atypical travel patterns (New Year's, reduced tourism). Models trained solely on January data may underperform during summer months, major events, or holiday periods when taxi demand patterns shift significantly.
+ 
+**Yellow taxi only:** Our analysis excludes green taxis (which operate primarily outside Manhattan), ride-hailing services (Uber, Lyft, Via), and for-hire vehicles. The congestion fee applies across all these categories, so our model captures only one segment of the affected market.
+ 
+### 2. Fairness Across Boroughs
+ 
+**Geographic performance disparity:** Because the majority of yellow taxi trips originate in or near Manhattan, the model has significantly more training data for Manhattan locations than for outer boroughs. This creates a potential fairness concern: predictions for trips starting in the Bronx, Staten Island, or eastern Brooklyn/Queens may be less accurate simply due to data scarcity, not because those trips are inherently harder to predict.
+ 
+**Congestion fee burden distribution:** The congestion pricing policy disproportionately affects trips entering the Manhattan CBD. Residents and workers who must travel into the CBD — including lower-income service workers — bear this cost. While our model doesn't create this disparity, using it to optimize routing or pricing could inadvertently reinforce patterns that disadvantage certain communities. For example, if a ride-hailing platform uses the model to add surcharges preemptively, it could make CBD-bound trips more expensive before the congestion fee even applies.
+ 
+### 3. Privacy Considerations
+ 
+**Trip-level granularity:** Although the TLC dataset is anonymized (no driver or passenger identifiers), the combination of precise pickup/dropoff location IDs and timestamps could theoretically be used to re-identify individuals with regular commute patterns. Any application of these models should avoid exposing individual trip-level predictions in ways that could compromise passenger privacy.
+ 
+**Location sensitivity:** Pickup and dropoff location IDs, while critical for model performance, encode information about where people live and work. Aggregating predictions by location could reveal demographic or behavioral patterns about specific neighborhoods.
+ 
+### 4. Model Limitations
+ 
+**Feature leakage vigilance:** We dropped 24 post-trip and financial features to prevent data leakage. However, some remaining features (e.g., `RatecodeID`, which includes negotiated fares) could carry subtle leakage signals depending on when they are recorded in the dispatch system. Ongoing auditing of feature provenance is important.
+ 
+**Label encoding of categorical features:** Using `LabelEncoder` for features like `pickup_borough` and `time_of_day` introduces an artificial ordinal relationship (e.g., "Bronx" = 0, "Brooklyn" = 1, "Manhattan" = 2). While Random Forest is robust to this, it can mislead Linear/Logistic Regression into treating the numeric encoding as meaningful ordering. One-hot encoding would be more appropriate for the linear models, though at the cost of increased dimensionality.
+ 
+**Overfitting residual in Random Forest:** Despite regularization (max_depth=30, min_samples_leaf=5), the RF regressor shows a train-test R² gap between train and test sets. This indicates some residual overfitting — the model has partially memorized training patterns that don't generalize. Further tuning by Moses and Tarun should address this.
+ 
+**Class imbalance handling:** The congestion fee target has a ~74/26 YES/NO split. We addressed this with `class_weight='balanced'` in Random Forest, but the Logistic Regression baseline did not use balanced weights (intentionally, for a clean comparison). This means the LR classification results are somewhat pessimistic — adding balanced weights would improve its No Fee recall at the cost of some majority-class precision.
+ 
+### 5. Responsible Use Recommendations
+ 
+- **Validate on recent data** before any operational deployment — January 2025 patterns may not hold.
+- **Monitor performance by borough** to ensure outer-borough trips receive acceptable prediction quality.
+- **Avoid individual-level trip exposure** — aggregate predictions for planning purposes rather than surfacing them at the passenger level.
+- **Pair model predictions with human judgment** for high-stakes decisions like fare adjustments or policy recommendations.
+- **Document model limitations transparently** in any stakeholder-facing deliverable so decision-makers understand the boundaries of what the model can reliably predict.
