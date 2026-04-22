@@ -82,8 +82,102 @@ Random Forest, using `class_weight='balanced'`, achieves 0.93 recall on No Fee a
      - Time-of-day accuracy/F1 patterns you found (higher accuracy during very early/late times)
      - Practical implications for stakeholders
 -->
- 
-*[To be completed by Morgan]*
+
+The XGBoost classifier was developed to predict whether a taxi trip incurs a congestion fee (has_congestion_fee) using only features available at pickup time. Among the models evaluated, XGBoost demonstrated the strongest overall performance, highlighting the importance of modeling nonlinear relationships in transportation data.
+
+##### Model Performance and What It Learned 
+
+Across evaluation metrics, XGBoost consistently outperformed both Logistic Regression and Random Forest:
+- Accuracy (~0.962): Highest overall correctness across all models
+- F1 Score (~0.976): Best balance between precision and recall, particularly important given class imbalance
+- AUC (ROC) (~0.985): Strongest ability to rank trips by congestion likelihood across different decision thresholds
+
+These results indicate that congestion fee occurrence is not driven by simple linear relationships. Instead, it depends on interacting factors such as:
+- Time of day (e.g., rush hour vs off-peak)
+- Pickup location (high-density vs low-density boroughs)
+- Trip structure (distance and fare-related features)
+
+XGBoost’s boosting framework allows it to iteratively correct errors from previous trees, enabling it to capture subtle patterns and edge cases that simpler models miss.
+
+##### Feature Importance Insights
+
+Feature importance analysis showed that the model relied most heavily on:
+- Temporal features (hour, time_slot, and interaction terms)
+- Spatial features (pickup borough and zone indicators)
+- Trip characteristics (distance and engineered fare ratios)
+
+This suggests that congestion fees are strongly influenced by spatiotemporal dynamics, particularly:
+- Peak commuting hours where congestion pricing is active
+- High-traffic boroughs (e.g., central business districts)
+- Trip types associated with structured surcharges
+
+For Maria’s workflow, this means:
+- The model effectively encodes patterns that experienced drivers learn over time (e.g., “midtown at 5 PM = likely fee”)
+- It provides a consistent and data-driven estimate rather than relying on intuition alone
+
+##### Comparison to Other Models
+
+Logistic Regression:
+- Served as a strong, interpretable baseline
+- Limited by its assumption of linear relationships
+- Unable to fully capture interactions like hour × borough
+Random Forest:
+- Improved performance by modeling nonlinear interactions
+- Reduced overfitting through averaging across trees
+- However, lacked the iterative refinement of boosting
+XGBoost:
+- Achieved the best overall results across all evaluation metrics
+- More effectively captured high-order interactions and rare patterns
+- Provided the best tradeoff between sensitivity (recall) and precision
+
+Overall, XGBoost demonstrated superior ability to generalize while still capturing complex structure in the data.
+
+##### Misclassification Analysis
+
+Using the confusion matrix, prediction errors were analyzed in terms of real-world impact:
+
+- False Positives (FP) — predicted a congestion fee when none existed
+→ For Maria: may lead to rejecting a trip that is actually more profitable than expected
+- False Negatives (FN) — failed to predict a real congestion fee
+→ For Maria: results in unexpected deductions, reducing realized hourly earnings
+
+The XGBoost model achieved:
+- Lower false negative rates compared to other models
+- A controlled number of false positives
+
+This is an important tradeoff. In this context:
+- False negatives are more costly because they directly reduce earnings
+- XGBoost prioritizes capturing true congestion trips while avoiding excessive overprediction
+
+##### Time-of-Day Performance Patterns
+
+When evaluating model performance across different hours of the day:
+- Higher accuracy and F1 scores during very early morning and late-night hours
+- Slightly lower performance during peak traffic periods (e.g., late afternoon and evening)
+
+This pattern reflects underlying data complexity:
+- Off-peak hours are more stable and predictable
+- Peak hours introduce greater variability due to traffic fluctuations, demand spikes, and route uncertainty
+
+Despite this, XGBoost still maintains strong performance during high-variance periods, indicating robustness.
+
+##### Practical Implications for Maria (Stakeholder)
+
+For Maria Santos, the XGBoost classifier provides a direct improvement to her decision-making process:
+- Enables real-time estimation of congestion fee likelihood using only pickup-time information
+- Reduces the risk of unexpected costs, leading to more stable earnings
+- Improves her ability to evaluate trip profitability quickly, especially under time pressure
+
+More broadly, the model:
+- Translates complex traffic and pricing patterns into a simple prediction
+- Reduces reliance on guesswork during high-stress decision moments
+- Supports more consistent and data-informed accept/decline decisions
+
+In practice, this means Maria can better optimize her hourly earnings by combining:
+- Predicted trip duration (regression model)
+- Predicted congestion fee likelihood (classification model)
+
+Together, these models create a more complete and actionable decision-support system.
  
 ---
  
